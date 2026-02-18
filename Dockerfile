@@ -1,27 +1,25 @@
 # Use official Python image
 FROM python:3.11-slim
 
-# Set environment variables
+# Environment settings
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set working directory
-WORKDIR /workspace
+# Set working directory to /app (recommended for RunPod)
+WORKDIR /app
 
-# Copy requirements first (better caching)
+# Copy requirements
 COPY requirements.txt .
 
-# Upgrade pip
+# Install dependencies
 RUN pip install --no-cache-dir --upgrade pip
-
-# Install project dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install RunPod serverless SDK (IMPORTANT)
-RUN pip install --no-cache-dir runpod fastapi uvicorn gunicorn
+# Install RunPod SDK
+RUN pip install --no-cache-dir runpod openai
 
-# Copy application files
+# Copy project files
 COPY . .
 
-# Start handler
+# Start RunPod serverless handler
 CMD ["python", "-u", "handler.py"]
