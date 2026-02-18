@@ -1,24 +1,27 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# Use official Python image
+FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set the working directory in the container
-WORKDIR /app
+# Set working directory
+WORKDIR /workspace
 
-# Install system dependencies
-# RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements file
+# Copy requirements first (better caching)
 COPY requirements.txt .
 
-# Install dependencies
+# Upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
+
+# Install project dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
+# Install RunPod serverless SDK (IMPORTANT)
+RUN pip install --no-cache-dir runpod fastapi uvicorn gunicorn
+
+# Copy application files
 COPY . .
 
-# Command to run the handler
-CMD [ "python", "-u", "handler.py" ]
+# Start handler
+CMD ["python", "-u", "handler.py"]
