@@ -4,3 +4,4 @@ openai
 python-dotenv
 loguru
 pydantic
+runpod
