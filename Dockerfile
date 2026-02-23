@@ -5,7 +5,7 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set working directory to /app (recommended for RunPod)
+# Set working directory
 WORKDIR /app
 
 # Copy requirements
@@ -15,11 +15,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install RunPod SDK
-RUN pip install --no-cache-dir runpod openai
-
 # Copy project files
 COPY . .
 
-# Start RunPod serverless handler
-CMD ["python", "-u", "handler.py"]
+# Expose port
+EXPOSE 8021
+
+# Start FastAPI app with uvicorn
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8021"]
